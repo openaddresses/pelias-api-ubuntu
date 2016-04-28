@@ -1,0 +1,12 @@
+Source: pelias-api
+Maintainer: Michal Migurski <mike-launchpad@teczno.com>
+Priority: optional
+Section: database
+Build-Depends: debhelper
+
+Package: pelias-api
+Architecture: all
+Depends: nodejs, nodejs-legacy, npm
+Section: utils
+Homepage: https://github.com/pelias
+Description: A distributed full-text geographic search engine. An open source project sponsored by Mapzen.

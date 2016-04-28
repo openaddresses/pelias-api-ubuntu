@@ -1,0 +1,38 @@
+#<!-- language: lang-sh -->
+#!upstart
+# using upstart http://upstart.ubuntu.com/getting-started.html and node forever  https://github.com/nodejitsu/forever/  
+# to run server
+# redhat has additional sudo restrictions, you must comment out 'Default requiretty' from /etc/sudoers
+#startup monitoring script derived from http://stackoverflow.com/questions/11084279/node-js-setup-for-easy-deployment-and-updating
+
+description "node.js server"
+author      "migurski"
+env PROGRAM_NAME="pelias"
+env FULL_PATH="/usr/lib/nodejs/pelias-api"
+env FILE_NAME="index.js"
+env NODE_PATH="/usr/bin/node"
+env USERNAME="root"
+
+start on startup
+stop on shutdown
+
+script
+    export HOME="/root"  
+    export NODE_ENV=staging #development/staging/production
+
+    echo $$ > /var/run/$PROGRAM_NAME.pid
+    cd $FULL_PATH        
+    #exec sudo -u $USERNAME $NODE_PATH $FULL_PATH/$FILE_NAME >> /var/log/$PROGRAM_NAME.sys.log 2>&1
+    exec $NODE_PATH $FULL_PATH/$FILE_NAME >> /var/log/$PROGRAM_NAME.sys.log 2>&1
+end script
+
+pre-start script
+    # Date format same as (new Date()).toISOString() for consistency
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/log/$PROGRAM_NAME.sys.log
+end script
+
+pre-stop script
+    rm /var/run/$PROGRAM_NAME.pid
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping" >> /var/log/$PROGRAM_NAME.sys.log
+end script
+
