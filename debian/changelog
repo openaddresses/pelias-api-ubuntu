@@ -1,3 +1,9 @@
+pelias-api (2.2.0-ubuntu1~xenial4) xenial; urgency=medium
+
+  * Replaced upstart script with init.d script
+
+ -- Michal Migurski <mike-launchpad@teczno.com>  Fri, 29 Apr 2016 16:26:16 -0700
+
 pelias-api (2.2.0-ubuntu1~xenial3) xenial; urgency=medium
 
   * Added /var/*/pelias-api directory creation to install

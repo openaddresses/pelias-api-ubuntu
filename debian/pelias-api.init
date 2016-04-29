@@ -1,0 +1,69 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          pelias-api
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:      $portmap
+# Should-Stop:       $portmap
+# X-Start-Before:    nis
+# X-Stop-After:      nis
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     true
+# Short-Description: 
+# Description:       
+### END INIT INFO
+
+start() {
+    if [ -e /var/run/pelias-api/master.*.pdf ]; then
+        ## Program is running, exit with error.
+        echo "Could not start: pelias-api is currently running." 1>&2
+        exit 1
+    else
+        cd /usr/lib/nodejs/pelias-api && npm start 2>&1 >/dev/null &
+        echo "pelias-api started"
+    fi
+}
+
+stop() {
+    if [ -e /var/run/pelias-api/master.*.pdf ]; then
+        ## Program is running, so stop it
+        for PIDFILE in /var/run/pelias-api/master.*.pdf; do
+            kill `cat $PIDFILE`
+        done
+        
+        echo "pelias-api stopped"
+    else
+        ## Program is not running, exit with error.
+        echo "Could not stop: pelias-api is not running." 1>&2
+        exit 1
+    fi
+}
+
+## Check to see if we are running as root first.
+## Found at http://www.cyberciti.biz/tips/shell-root-user-check-script.html
+if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root" 1>&2
+    exit 1
+fi
+
+case "$1" in
+    start)
+        start
+        exit 0
+    ;;
+    stop)
+        stop
+        exit 0
+    ;;
+    reload|restart|force-reload)
+        stop
+        start
+        exit 0
+    ;;
+    **)
+        echo "Usage: $0 {start|stop|reload}" 1>&2
+        exit 1
+    ;;
+esac
