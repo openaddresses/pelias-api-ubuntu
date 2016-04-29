@@ -1,3 +1,9 @@
+pelias-api (2.2.0-ubuntu1~xenial5) xenial; urgency=medium
+
+  * Corrected handling of /var/run/pelias-api directory
+
+ -- Michal Migurski <mike-launchpad@teczno.com>  Fri, 29 Apr 2016 16:53:27 -0700
+
 pelias-api (2.2.0-ubuntu1~xenial4) xenial; urgency=medium
 
   * Replaced upstart script with init.d script

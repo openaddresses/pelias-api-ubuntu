@@ -21,6 +21,7 @@ start() {
         echo "Could not start: pelias-api is currently running." 1>&2
         exit 1
     else
+        mkdir -p /var/run/pelias-api
         cd /usr/lib/nodejs/pelias-api && npm start 2>&1 >/dev/null &
         echo "pelias-api started"
     fi
@@ -32,7 +33,7 @@ stop() {
         for PIDFILE in /var/run/pelias-api/master.*.pdf; do
             kill `cat $PIDFILE`
         done
-        
+        rmdir /var/run/pelias-api
         echo "pelias-api stopped"
     else
         ## Program is not running, exit with error.

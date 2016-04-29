@@ -10,4 +10,4 @@ pelias-api/node_modules: pelias-api
 
 install:
 	find pelias-api -type f -exec install -v -D -m0755 '{}' '$(DESTDIR)/usr/lib/nodejs/{}' \;
-	mkdir -p '$(DESTDIR)/var/run/pelias-api' '$(DESTDIR)/var/log/pelias-api'
+	mkdir -p '$(DESTDIR)/var/log/pelias-api'
