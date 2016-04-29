@@ -1,0 +1,97 @@
+diff --git a/pelias-api/node_modules/cluster2/lib/index.js b/pelias-api/node_modules/cluster2/lib/index.js
+index d308738..2c4b81d 100644
+--- a/pelias-api/node_modules/cluster2/lib/index.js
++++ b/pelias-api/node_modules/cluster2/lib/index.js
+@@ -69,8 +69,8 @@ Cluster.prototype.listen = function(createApp, cb) {
+ 
+     if(options.cluster) {
+         var master = new Process({
+-            pids: process.cwd() + '/pids',
+-            logs: process.cwd() + '/logs',
++            pids: '/var/run/pelias-api',
++            logs: '/var/log/pelias-api',
+             port: options.port,
+             host: options.host || '0.0.0.0',
+             monPort: options.monPort,
+@@ -222,14 +222,14 @@ Cluster.prototype.componentStatus = function(){
+ 
+ Cluster.prototype.stop = function () {
+     var master = new Process({
+-        pids: process.cwd() + '/pids'
++        pids: '/var/run/pelias-api'
+     });
+     master.stop();
+ };
+ 
+ Cluster.prototype.shutdown = function () {
+     var master = new Process({
+-        pids: process.cwd() + '/pids'
++        pids: '/var/run/pelias-api'
+     });
+     master.shutdown();
+ };
+diff --git a/pelias-api/node_modules/cluster2/lib/monitor.js b/pelias-api/node_modules/cluster2/lib/monitor.js
+index 80ec76a..10fd0cc 100644
+--- a/pelias-api/node_modules/cluster2/lib/monitor.js
++++ b/pelias-api/node_modules/cluster2/lib/monitor.js
+@@ -52,7 +52,7 @@ var Monitor = module.exports = function Monitor(options) {
+             var root, paths, logs, stats;
+             var file = process.cwd() + req.url;
+             if(req.url === '/logs') {
+-                root = process.cwd() + '/logs';
++                root = '/var/log/pelias-api';
+                 paths = fs.readdirSync(root);
+                 logs = [];
+                 paths.forEach(function (filename) {
+diff --git a/pelias-api/node_modules/cluster2/lib/process.js b/pelias-api/node_modules/cluster2/lib/process.js
+index 85659f1..64c6eaf 100644
+--- a/pelias-api/node_modules/cluster2/lib/process.js
++++ b/pelias-api/node_modules/cluster2/lib/process.js
+@@ -56,7 +56,7 @@ var Process = module.exports = function Process(options) {
+     this.killall = function(signal) {
+         log('killall called with signal ', signal);
+         var that = this, fullname;
+-        fs.readdir(that.options.pids, function(err, paths) {
++        fs.readdir('/var/run/pelias-api', function(err, paths) {
+             var count = paths.length;
+             if(count === 0) {
+                 return;
+@@ -65,13 +65,13 @@ var Process = module.exports = function Process(options) {
+                 return /master\./.test(path);
+             });
+             paths.forEach(function(filename) {
+-                fullname = that.options.pids + '/' + filename;
++                fullname = '/var/run/pelias-api' + '/' + filename;
+                 if(/worker\./.test(filename)) {
+                     that.kill(fullname, signal, function() {
+                         count = count - 1;
+                         if(count === 1 && mf) {
+                             log('Sending ', signal, ' to the master');
+-                            that.kill(that.options.pids + '/' + mf, signal);
++                            that.kill('/var/run/pelias-api' + '/' + mf, signal);
+                         }
+                     });
+                 }
+@@ -133,7 +133,7 @@ var Process = module.exports = function Process(options) {
+         var self = this;
+         self.lastTime = self.lastTime || Date.now();
+ 
+-        fs.writeFileSync(util.format('%s/worker.%d.pid', this.options.pids, worker.pid), worker.pid);
++        fs.writeFileSync(util.format('%s/worker.%d.pid', '/var/run/pelias-api', worker.pid), worker.pid);
+ 
+         self.emitter.emit('forked', worker.pid);
+ 
+@@ -386,10 +386,10 @@ Process.prototype.listen = function() {
+         });
+ 
+         monitor.once('listening', function() {
+-            misc.ensureDir(process.cwd() + '/pids', true); // Ensure pids dir
+-            misc.ensureDir(process.cwd() + '/logs'); // Ensure logs dir
++            // misc.ensureDir('/var/run/pelias-api', true); // Ensure pids dir
++            // misc.ensureDir('/var/log/pelias-api'); // Ensure logs dir
+ 
+-            fs.writeFileSync(util.format('%s/master.%d.pdf', self.options.pids, self.stats.pid), self.stats.pid);
++            fs.writeFileSync(util.format('%s/master.%d.pdf', '/var/run/pelias-api', self.stats.pid), self.stats.pid);
+             log('Master ', process.pid, ' started');
+ 
+             // Fork workers

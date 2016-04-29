@@ -6,6 +6,7 @@ pelias-api:
 
 pelias-api/node_modules: pelias-api
 	cd pelias-api && npm install
+	patch -p1 < patches/cluster2-pids-logs.patch
 
 install:
 	find pelias-api -type f -exec install -v -D -m0755 '{}' '$(DESTDIR)/usr/lib/nodejs/{}' \;
