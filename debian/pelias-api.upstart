@@ -7,7 +7,7 @@
 
 description "node.js server"
 author      "migurski"
-env PROGRAM_NAME="pelias"
+env PROGRAM_NAME="pelias-api"
 env FULL_PATH="/usr/lib/nodejs/pelias-api"
 env FILE_NAME="index.js"
 env NODE_PATH="/usr/bin/node"
@@ -23,7 +23,8 @@ script
     echo $$ > /var/run/$PROGRAM_NAME.pid
     cd $FULL_PATH        
     #exec sudo -u $USERNAME $NODE_PATH $FULL_PATH/$FILE_NAME >> /var/log/$PROGRAM_NAME.sys.log 2>&1
-    exec $NODE_PATH $FULL_PATH/$FILE_NAME >> /var/log/$PROGRAM_NAME.sys.log 2>&1
+    #exec $NODE_PATH $FULL_PATH/$FILE_NAME >> /var/log/$PROGRAM_NAME.sys.log 2>&1
+    exec /usr/bin/npm start >> /var/log/$PROGRAM_NAME.sys.log 2>&1
 end script
 
 pre-start script
